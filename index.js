@@ -1,8 +1,9 @@
 import * as dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import bcrypt from "bcrypt";
+
 import pizzaRouter from "./router/pizza.router.js";
+import usersRourter from "./router/users.router.js";
 
 import { MongoClient } from "mongodb";
 dotenv.config();
@@ -20,7 +21,7 @@ console.log("Mongo is connected !!!  ");
 app.use(express.json());
 app.use(cors());
 app.use("/",pizzaRouter);
-// app.use("/",usersRourt);
+app.use("/",usersRourter);
 // const pizzalist = [
 //   {
 //     name: "Pepper Barbecue Chicken",
@@ -85,3 +86,6 @@ app.get("/", function (request, response) {
 
 
 app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
+
+//generate hashed password
+
