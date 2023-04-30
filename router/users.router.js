@@ -1,6 +1,8 @@
 import express from "express";
 import { createUsers, getUserByName } from "../service/users.service.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 const router = express.Router();
 
 async function generateHashedPassword(password) {
@@ -39,35 +41,28 @@ router.post("/signup", async function (request, response) {
   }
 });
 router.post("/login", async function (request, response) {
-    try {
-      const { email, password } = request.body;
-      const userFromDb = await getUserByName(email);
-      console.log(userFromDb);
-      if (!userFromDb) {
+  try {
+    const { email, password } = request.body;
+    const userFromDb = await getUserByName(email);
+    console.log(userFromDb);
+    if (!userFromDb) {
+      response.status(401).send({ message: "Invalid credentials" });
+    } else {
+      const storedDBPassword = userFromDb.password;
+      const isPasswordCheck = await bcrypt.compare(password, storedDBPassword);
+      console.log(isPasswordCheck);
+      if (isPasswordCheck) {
+        const token = jwt.sign({ id: userFromDb._id }, process.env.SECRET_KEY);
+        response
+          .status(200)
+          .send({ message: "successful login", token: token });
+      } else {
         response.status(401).send({ message: "Invalid credentials" });
       }
-      else{
-        const storedDBPassword =userFromDb.password;
-        const isPasswordCheck = await bcrypt.compare(password,storedDBPassword);
-        console.log(isPasswordCheck);
-        if(isPasswordCheck){
-            response.status(400).send({ message: "successful login" });
-        }else{
-            response.status(401).send({ message: "Invalid credentials" });  
-        }
-       }
-    //   else {
-    //     const hashedPassword = await generateHashedPassword(password);
-    //     const result = await createUsers({
-    //       name: name,
-    //       email: email,
-    //       password: hashedPassword,
-    //     });
-    //     response.send(result);
-    //   }
-    } catch (err) {
-      console.log(err);
     }
-  });
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 export default router;
