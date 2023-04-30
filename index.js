@@ -1,4 +1,6 @@
 import * as dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 
@@ -6,7 +8,6 @@ import pizzaRouter from "./router/pizza.router.js";
 import usersRourter from "./router/users.router.js";
 
 import { MongoClient } from "mongodb";
-dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT;
