@@ -21,7 +21,7 @@ router.post("/createpizza", async function (request, response) {
 // router.post("/payments", async function (request, response) {
 //   try{
 //     const {total,token} = request.body;
-//     const result = await createPayment(data);
+  
 //   response.status(200).send({message:"Order Successfully"});
 
 //   }catch(err){
